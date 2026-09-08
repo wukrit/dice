@@ -88,6 +88,17 @@ Physics outcomes are server-controlled, but **this is not a statistically certif
 
 ## Deploy to Railway
 
+### This repository's deployment
+
+- Public source: [wukrit/dice](https://github.com/wukrit/dice), branch **main**.
+- Application URL: https://dice-room-production.up.railway.app
+- Railway project: [dice](https://railway.com/project/3e048dae-b754-4daa-8295-cedd45612fb8/service/a4aa41f7-102e-4b79-b8aa-8509ca201911?environmentId=bf104aef-44f8-4352-8701-9f8d7a3a6779), service **dice-room**, environment **production**.
+- Railway builds from GitHub automatically when `main` changes; a local `railway up` is not needed for routine releases.
+- The service uses the root Dockerfile, one replica, port 3000, and `/healthz`. `PUBLIC_ORIGIN` matches the application URL and `TRUST_PROXY=true` enables Railway-aware client limits.
+- Every deployment intentionally resets rooms. Coordinate releases with active games.
+
+### Set up another deployment
+
 Only **one application service** is needed. No database, persistent volume, or Redis.
 
 1. Create or link the intended Railway project and application service.
