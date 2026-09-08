@@ -1,0 +1,13 @@
+/target/
+/web/node_modules/
+/web/dist/
+/web/test-results/
+/web/playwright-report/
+.env
+.env.*
+!.env.example
+.DS_Store
+/.impeccable/review/
+/.impeccable/config.local.json
+*.log
+*.tsbuildinfo

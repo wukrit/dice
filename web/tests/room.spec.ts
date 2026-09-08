@@ -1,0 +1,106 @@
+import { test, expect } from '@playwright/test';
+import { mkdir } from 'node:fs/promises';
+
+test('two players share a swipe, replay it, and recover after a disconnect', async ({ page, browser }, testInfo) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/');
+  await page.getByLabel('What should we call you?').fill('Mira');
+  await page.getByRole('button', { name: 'Create a room' }).click();
+  await expect(page).toHaveURL(/\/r\/[a-f0-9-]+/);
+  await expect(page.getByText('Connected', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'd20', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  const invite = page.url();
+  const guestContext = await browser.newContext({ reducedMotion: 'reduce' });
+  const guest = await guestContext.newPage();
+  try {
+    await guest.goto(invite);
+    await guest.getByLabel('What should we call you?').fill('Rowan');
+    await guest.getByRole('button', { name: 'Join this room' }).click();
+    await expect(guest.getByText('Connected', { exact: true })).toBeVisible();
+    await expect(page.locator('.party-names').getByText('Rowan', { exact: true })).toBeVisible();
+    await expect(page.locator('.dice-table canvas')).toBeVisible();
+    const box = await page.locator('.dice-table canvas').boundingBox();
+    if (!box) throw new Error('Missing 3D canvas');
+    await page.mouse.move(box.x + box.width * 0.35, box.y + box.height * 0.75);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.68, box.y + box.height * 0.3, { steps: 12 });
+    await page.mouse.up();
+    await expect(page.locator('.history-row')).toHaveCount(1);
+    await expect(guest.locator('.history-row')).toHaveCount(1);
+    const result = await page.locator('.history-result').first().innerText();
+    await expect(guest.locator('.history-result').first()).toHaveText(result);
+    await expect(page.getByRole('button', { name: 'Roll d20', exact: false })).toBeEnabled({ timeout: 25000 });
+    await expect(page.locator('.result-value')).toHaveText(result);
+    await page.locator('.history-row').first().click();
+    await expect(page.getByRole('button', { name: /Back to live/ })).toBeVisible();
+    await expect(page.locator('.result-value')).toHaveText(result, { timeout: 25000 });
+    await page.getByRole('button', { name: /Back to live/ }).click();
+    // The history remains authoritative even when the browser misses the broadcast.
+    await guestContext.setOffline(true);
+    await page.getByRole('button', { name: 'd6', exact: true }).click();
+    await page.getByRole('button', { name: 'Roll d6', exact: false }).click();
+    await expect(page.locator('.history-row')).toHaveCount(2);
+    await guestContext.setOffline(false);
+    await guest.reload();
+    await expect(guest.getByText('Connected', { exact: true })).toBeVisible();
+    await expect(guest.locator('.history-row')).toHaveCount(2);
+    await expect(guest.locator('.history-result').first()).toHaveText(await page.locator('.history-result').first().innerText());
+    await guest.locator('.history-row').first().click();
+    await expect(guest.getByRole('button', { name: /Back to live/ })).toBeVisible();
+    await guest.getByRole('button', { name: /Back to live/ }).click();
+    await expect(guest.locator('.roll-status')).toContainText('d20 is ready');
+    await expect(page.getByRole('button', { name: 'Roll d6', exact: false })).toBeEnabled({ timeout: 25000 });
+    const latestValue = await page.locator('.history-result').first().innerText();
+    await page.locator('.history-row').last().click();
+    await expect(page.locator('.roll-status')).toContainText('Rolling d20');
+    await page.getByRole('button', { name: /Back to live/ }).click();
+    await expect(page.locator('.result-value')).toHaveText(latestValue);
+    await expect(page.locator('.roll-status')).toContainText('rolled d6');
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await mkdir('../.impeccable/review', { recursive: true });
+    await page.screenshot({ path: `../.impeccable/review/${testInfo.project.name.includes('iphone') ? 'mobile' : 'desktop'}.png`, fullPage: true });
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+    expect(overflow).toBe(false);
+    expect(errors).toEqual([]);
+    const roomPath = new URL(invite).pathname.replace('/r/', '/api/rooms/');
+    const history = await (await page.request.get(`${roomPath}/rolls`)).json();
+    const first = await (await page.request.get(`${roomPath}/rolls/${history.rolls[0].id}`)).json();
+    const second = await (await page.request.get(`${roomPath}/rolls/${history.rolls[0].id}`)).json();
+    expect(first).toEqual(second);
+  } finally { await guestContext.close(); }
+});
+
+test('percentile rolls have two physical dice and the right total', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.addInitScript(() => {
+    const target = window as unknown as { drawnLabels: string[] };
+    target.drawnLabels = [];
+    const original = CanvasRenderingContext2D.prototype.fillText;
+    CanvasRenderingContext2D.prototype.fillText = function(text, x, y, maxWidth) {
+      target.drawnLabels.push(text);
+      if (maxWidth === undefined) original.call(this, text, x, y); else original.call(this, text, x, y, maxWidth);
+    };
+  });
+  await page.goto('/');
+  await page.getByLabel('What should we call you?').fill('Percentile tester');
+  await page.getByRole('button', { name: 'Create a room' }).click();
+  await expect(page.getByText('Connected', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'd10', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { drawnLabels: string[] }).drawnLabels.includes('10'))).toBe(true);
+  await page.evaluate(() => { (window as unknown as { drawnLabels: string[] }).drawnLabels = []; });
+  await page.getByRole('button', { name: 'd100', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { drawnLabels: string[] }).drawnLabels.includes('0'))).toBe(true);
+  await page.getByRole('button', { name: 'Roll d100', exact: false }).click();
+  await expect(page.locator('.history-row')).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Roll d100', exact: false })).toBeEnabled();
+  const roomPath = new URL(page.url()).pathname.replace('/r/', '/api/rooms/');
+  const history = await (await page.request.get(`${roomPath}/rolls`)).json();
+  const recording = await (await page.request.get(`${roomPath}/rolls/${history.rolls[0].id}`)).json();
+  expect(recording.simulation.tracks).toHaveLength(2);
+  expect(recording.roll.value).toBeGreaterThanOrEqual(1);
+  expect(recording.roll.value).toBeLessThanOrEqual(100);
+  const tracks = recording.simulation.tracks;
+  const sum = tracks.find((track: {kind: number}) => track.kind === 100).value + tracks.find((track: {kind: number}) => track.kind === 10).value % 10;
+  expect(recording.roll.value).toBe(sum || 100);
+});

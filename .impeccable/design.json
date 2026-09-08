@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-08T23:31:05Z",
+  "title": "Design System: Dice Room",
+  "extensions": {
+    "colorMeta": {
+      "accent": { "role": "primary", "displayName": "Slate Navy", "tonalRamp": ["oklch(15% 0.055 240)", "oklch(26% 0.055 240)", "oklch(38% 0.055 240)", "oklch(49% 0.055 240)", "oklch(61% 0.055 240)", "oklch(72% 0.055 240)", "oklch(84% 0.055 240)", "oklch(95% 0.055 240)"] },
+      "ink": { "role": "neutral", "displayName": "Dark Slate", "tonalRamp": ["oklch(15% 0.037 241)", "oklch(26% 0.037 241)", "oklch(38% 0.037 241)", "oklch(49% 0.037 241)", "oklch(61% 0.037 241)", "oklch(72% 0.037 241)", "oklch(84% 0.037 241)", "oklch(95% 0.037 241)"] },
+      "muted": { "role": "neutral", "displayName": "Soft Slate", "tonalRamp": ["oklch(15% 0.031 243)", "oklch(26% 0.031 243)", "oklch(38% 0.031 243)", "oklch(49% 0.031 243)", "oklch(61% 0.031 243)", "oklch(72% 0.031 243)", "oklch(84% 0.031 243)", "oklch(95% 0.031 243)"] },
+      "page": { "role": "neutral", "displayName": "Cool Paper", "tonalRamp": ["oklch(15% 0.003 248)", "oklch(26% 0.003 248)", "oklch(38% 0.003 248)", "oklch(49% 0.003 248)", "oklch(61% 0.003 248)", "oklch(72% 0.003 248)", "oklch(84% 0.003 248)", "oklch(95% 0.003 248)"] },
+      "surface": { "role": "neutral", "displayName": "White", "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(38% 0 0)", "oklch(49% 0 0)", "oklch(61% 0 0)", "oklch(72% 0 0)", "oklch(84% 0 0)", "oklch(95% 0 0)"] },
+      "line": { "role": "neutral", "displayName": "Pale Slate", "tonalRamp": ["oklch(15% 0.012 241)", "oklch(26% 0.012 241)", "oklch(38% 0.012 241)", "oklch(49% 0.012 241)", "oklch(61% 0.012 241)", "oklch(72% 0.012 241)", "oklch(84% 0.012 241)", "oklch(95% 0.012 241)"] },
+      "secondary": { "role": "primary", "displayName": "Pale Action Blue", "tonalRamp": ["oklch(15% 0.012 239)", "oklch(26% 0.012 239)", "oklch(38% 0.012 239)", "oklch(49% 0.012 239)", "oklch(61% 0.012 239)", "oklch(72% 0.012 239)", "oklch(84% 0.012 239)", "oklch(95% 0.012 239)"] },
+      "selected": { "role": "primary", "displayName": "Chosen Die Blue", "tonalRamp": ["oklch(15% 0.017 237)", "oklch(26% 0.017 237)", "oklch(38% 0.017 237)", "oklch(49% 0.017 237)", "oklch(61% 0.017 237)", "oklch(72% 0.017 237)", "oklch(84% 0.017 237)", "oklch(95% 0.017 237)"] },
+      "notice-bg": { "role": "neutral", "displayName": "Warm Notice Surface", "tonalRamp": ["oklch(15% 0.024 52)", "oklch(26% 0.024 52)", "oklch(38% 0.024 52)", "oklch(49% 0.024 52)", "oklch(61% 0.024 52)", "oklch(72% 0.024 52)", "oklch(84% 0.024 52)", "oklch(95% 0.024 52)"] },
+      "notice-ink": { "role": "neutral", "displayName": "Warm Notice Ink", "tonalRamp": ["oklch(15% 0.09 45)", "oklch(26% 0.09 45)", "oklch(38% 0.09 45)", "oklch(49% 0.09 45)", "oklch(61% 0.09 45)", "oklch(72% 0.09 45)", "oklch(84% 0.09 45)", "oklch(95% 0.09 45)"] }
+    },
+    "typographyMeta": {
+      "body": { "displayName": "Platform UI", "purpose": "System interface stack; 16px fields. No custom font asset." },
+      "section-title": { "displayName": "History Title", "purpose": "Compact section hierarchy, not a display face." },
+      "label": { "displayName": "Field and Status Label", "purpose": "Emphasized compact interface labels." },
+      "result": { "displayName": "Current Result", "purpose": "Prominent roll value outside the canvas; tabular numerals." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "button-color", "value": "background-color 140ms ease-out, color 140ms ease-out", "purpose": "Primary and secondary button state transitions without lift." },
+      { "name": "loading-spin", "value": "spin 1s linear infinite", "purpose": "Loading icons rotate to 360deg; not idle decoration." },
+      { "name": "reduced-motion", "value": "0.01ms", "purpose": "CSS transition and animation duration under prefers-reduced-motion: reduce; one iteration. Canvas separately shows the recorded final pose." }
+    ],
+    "breakpoints": [
+      { "name": "phone-max", "value": "760px" },
+      { "name": "narrow-phone-max", "value": "359px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Create, join, or throw; the throw variant is full-width and at least 52px tall.",
+      "html": "<button class=\"ds-primary\">Roll d20</button>",
+      "css": ".ds-primary{font:650 16px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:12px 20px;border:0;border-radius:10px;background:var(--accent,#284c63);color:#fff;cursor:pointer;touch-action:manipulation;transition:background-color 140ms ease-out,color 140ms ease-out}.ds-primary:hover:not(:disabled){background:#1c3c51}.ds-primary:focus-visible{outline:3px solid #407da5;outline-offset:4px}.ds-primary:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-primary{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Invite-party action; the phone variant reduces padding and text size.",
+      "html": "<button class=\"ds-secondary\">Invite party</button>",
+      "css": ".ds-secondary{font:650 16px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:12px 20px;border:0;border-radius:10px;background:#e3ebf0;color:var(--accent,#284c63);cursor:pointer;touch-action:manipulation;transition:background-color 140ms ease-out,color 140ms ease-out}.ds-secondary:hover:not(:disabled){background:#d5e1e9}.ds-secondary:focus-visible{outline:3px solid #407da5;outline-offset:4px}.ds-secondary:disabled{opacity:.5;cursor:not-allowed}@media(max-width:760px){.ds-secondary{min-height:42px;padding:10px 12px;font-size:12px}}@media(prefers-reduced-motion:reduce){.ds-secondary{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "button-icon",
+      "description": "Replay or dismiss; always supplies an accessible name.",
+      "html": "<button class=\"ds-icon\" aria-label=\"Replay this roll\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/></svg></button>",
+      "css": ".ds-icon{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;background:transparent;border:0;border-radius:8px;color:var(--ink,#233746);cursor:pointer;touch-action:manipulation}.ds-icon:hover{background:#e3ebf0}.ds-icon:focus-visible{outline:3px solid #407da5;outline-offset:4px}.ds-icon:disabled{opacity:.5;cursor:not-allowed}"
+    },
+    {
+      "name": "Text Action",
+      "kind": "button",
+      "refersTo": "text-link",
+      "description": "Underlined retry, leave, or reload action; no filled container.",
+      "html": "<button class=\"ds-text\">Reload to try again</button>",
+      "css": ".ds-text{font:400 16px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:8px 0;color:var(--accent,#284c63);text-decoration:underline;text-underline-offset:3px;cursor:pointer;touch-action:manipulation}.ds-text:hover{background:none}.ds-text:focus-visible{outline:3px solid #407da5;outline-offset:4px}.ds-text:disabled{opacity:.5;cursor:not-allowed}"
+    },
+    {
+      "name": "Labeled Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Shared display-name and invitation-link field treatment.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-name\">What should we call you?</label><input class=\"ds-field\" id=\"ds-name\" placeholder=\"Your display name\" autocomplete=\"nickname\" maxlength=\"32\" required>",
+      "css": ".ds-field-label{display:block;margin-bottom:12px;font:650 14px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink,#233746)}.ds-field{font:400 16px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;width:100%;min-width:0;min-height:52px;border:1px solid #9eafbc;border-radius:10px;background:#fff;padding:13px 15px;color:var(--ink,#233746);caret-color:var(--accent,#284c63)}.ds-field::placeholder{color:#6b7985;opacity:1}.ds-field:hover{border-color:#9eafbc}.ds-field:focus-visible{outline:3px solid #407da5;outline-offset:4px}"
+    },
+    {
+      "name": "Die Choice",
+      "kind": "chip",
+      "refersTo": "die-choice",
+      "description": "A pressed button, not decorative tagging; selection is also exposed through aria-pressed.",
+      "html": "<button class=\"ds-die\" aria-pressed=\"false\">d6</button> <button class=\"ds-die\" aria-pressed=\"true\">d20</button>",
+      "css": ".ds-die{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-width:44px;min-height:48px;padding:6px;background:#fff;color:var(--ink,#233746);border:1px solid var(--line,#d8e0e6);border-radius:9px;cursor:pointer;touch-action:manipulation}.ds-die[aria-pressed=true]{background:#dce8f0;border-color:#52778f;color:#1d425b}.ds-die:hover:not(:disabled){background:#e5edf3}.ds-die:focus-visible{outline:3px solid #407da5;outline-offset:4px}.ds-die:disabled{opacity:.5;cursor:not-allowed}@media(max-width:760px){.ds-die{font-size:12px;min-height:46px}}"
+    },
+    {
+      "name": "History Replay Row",
+      "kind": "custom",
+      "description": "Divider-led list row with a fixed result column and truncated player name; sample content is illustrative.",
+      "html": "<button class=\"ds-history\" aria-label=\"Replay Mira's d20 roll of 17, roll 1\"><span class=\"ds-result\">17</span><span class=\"ds-detail\"><strong>Mira</strong><span>d20 · Sep 8, 7:29 PM</span></span><span class=\"ds-sequence\">#1</span><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polygon points=\"6 3 20 12 6 21 6 3\"/></svg></button>",
+      "css": ".ds-history{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-variant-numeric:tabular-nums;width:100%;min-height:76px;display:flex;align-items:center;gap:12px;padding:12px 8px;text-align:left;border:0;border-bottom:1px solid var(--line,#d8e0e6);border-radius:0;background:transparent;color:var(--muted,#596b79);cursor:pointer;touch-action:manipulation}.ds-history:hover,.ds-history.ds-active{background:#e6edf2}.ds-history:focus-visible{outline:3px solid #407da5;outline-offset:-3px}.ds-history:disabled{opacity:.5;cursor:not-allowed}.ds-result{width:41px;flex-shrink:0;font-size:24px;font-weight:650;letter-spacing:-.02em;text-align:center;color:var(--accent,#284c63)}.ds-detail{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}.ds-detail strong{font-size:13px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink,#233746)}.ds-detail>span{font-size:11px}.ds-sequence{font-size:10px}.ds-history svg{flex-shrink:0}@media(max-width:760px){.ds-history{gap:14px}.ds-result{font-size:27px}.ds-detail strong{font-size:14px}.ds-detail>span{font-size:12px}}"
+    },
+    {
+      "name": "Inline Notice",
+      "kind": "custom",
+      "refersTo": "notice",
+      "description": "Warm inline alert with optional dismissal; not a floating toast or generic card.",
+      "html": "<div class=\"ds-notice\" role=\"alert\"><span>Couldn't load the dice.</span><button class=\"ds-dismiss\" aria-label=\"Dismiss message\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"m18 6-12 12M6 6l12 12\"/></svg></button></div>",
+      "css": ".ds-notice{font:400 14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:10px;background:#fae8de;color:#733619;margin:0 0 16px}.ds-dismiss{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;border:0;border-radius:8px;background:transparent;color:inherit;cursor:pointer;touch-action:manipulation}.ds-dismiss:hover{background:#e3ebf0}.ds-dismiss:focus-visible{outline:3px solid #407da5;outline-offset:4px}"
+    },
+    {
+      "name": "Home Brand Link",
+      "kind": "nav",
+      "description": "The only persistent navigation primitive: inline dice mark and product name return home.",
+      "html": "<a class=\"ds-brand\" href=\"/\" aria-label=\"Dice Room home\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"12\" height=\"12\" x=\"2\" y=\"10\" rx=\"2\" ry=\"2\"/><path d=\"m17.92 14.62 3.5-3.5a2 2 0 0 0 0-2.83l-5.71-5.71a2 2 0 0 0-2.83 0l-3.5 3.5M6 14h.01M10 18h.01M15 6h.01M18 9h.01\"/></svg><span>Dice Room</span></a>",
+      "css": ".ds-brand{display:inline-flex;align-items:center;gap:10px;font:720 19px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:-.025em;text-decoration:none;color:var(--ink,#233746)}.ds-brand svg{flex-shrink:0}.ds-brand:hover{text-decoration:none}.ds-brand:focus-visible{outline:3px solid #407da5;outline-offset:4px}@media(max-width:760px){.ds-brand{font-size:18px}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A practical shared dice tray",
+    "overview": "Cool light surfaces, slate-blue felt, navy dice, system UI type, and clear rectangular controls support a simple shared-table task. Expression comes from the working 3D tray, not fantasy-dashboard decoration. This records the built interface, not a replacement direction.",
+    "keyCharacteristics": [
+      "Quiet controls around a tactile, bounded tray.",
+      "Readable results and replay actions outside the canvas.",
+      "Flat interface surfaces; physical depth inside the tray."
+    ],
+    "rules": [
+      { "name": "The State Has Words Rule", "body": "Selection, connection, errors, and roll progress use text or accessible state as well as color.", "section": "colors" },
+      { "name": "The Depth Belongs to the Tray Rule", "body": "Keep interface chrome flat; retain physical lighting and shadows in the 3D scene.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the button alternative and textual result available outside the canvas.",
+      "Do pair selected and connection colors with explicit labels or accessible state.",
+      "Do preserve reduced-motion final poses and the separation between replay and live state.",
+      "Do keep the complete tray visible while responsive history moves below the controls."
+    ],
+    "donts": [
+      "Don't extend physical scene shadows into raised interface cards.",
+      "Don't replace the pinned functional interface with fantasy-dashboard ornament.",
+      "Don't treat temporary history as a permanent archive; keep the six-hour idle/server-restart disclosure visible.",
+      "Don't turn local large join headings or tiny ancillary metadata into reusable typography defaults."
+    ]
+  }
+}
