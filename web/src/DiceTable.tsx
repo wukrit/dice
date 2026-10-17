@@ -28,6 +28,7 @@ type Gesture = {
   x: number;
   y: number;
   startedAt: number;
+  moved: boolean;
   start: THREE.Vector3;
 };
 
@@ -505,7 +506,7 @@ class TableScene {
     const start = this.worldPoint(event);
     if (!start || Math.abs(start.x) > HALF_WIDTH || Math.abs(start.z) > HALF_LENGTH) return;
     event.preventDefault();
-    this.gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, startedAt: performance.now(), start };
+    this.gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, startedAt: performance.now(), moved: false, start };
     try {
       this.renderer!.domElement.setPointerCapture(event.pointerId);
     } catch {
@@ -535,6 +536,10 @@ class TableScene {
       return;
     }
     event.preventDefault();
+    if (!this.gesture.moved && Math.hypot(event.clientX - this.gesture.x, event.clientY - this.gesture.y) >= 6) {
+      this.gesture.startedAt = performance.now();
+      this.gesture.moved = true;
+    }
     const end = this.worldPoint(event);
     if (end) this.updateCue(end);
   };

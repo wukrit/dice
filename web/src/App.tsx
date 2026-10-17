@@ -10,6 +10,16 @@ const DICE: DieKind[] = [4, 6, 8, 10, 12, 20, 100];
 const roomMatch = /^\/r\/([a-f0-9-]{36})\/?$/i.exec(location.pathname);
 const roomId = roomMatch?.[1] ?? null;
 
+function randomSwipe(): Swipe {
+  const angle = Math.random() * Math.PI * 2;
+  const distance = 0.24 + Math.random() * 0.52;
+  return {
+    start: [-Math.cos(angle) * 0.25, -Math.sin(angle) * 0.25],
+    delta: [Math.cos(angle) * distance, Math.sin(angle) * distance],
+    duration_ms: Math.round(180 + Math.random() * 180),
+  };
+}
+
 function Brand() { return <a href="/" className="brand" aria-label="Dice Room home"><Dices size={25} strokeWidth={1.7} /><span>Dice Room</span></a>; }
 function Notice({ children, onClose }: { children: React.ReactNode; onClose?: () => void }) {
   return <div className="notice" role="alert"><span>{children}</span>{onClose && <button className="icon-button" onClick={onClose} aria-label="Dismiss message"><X size={18} /></button>}</div>;
@@ -182,7 +192,7 @@ function Room({ session, onLeave }: { session: Session; onLeave: () => void }) {
             {queueCount > 0 && !replaying && <span className="queue-count">{queueCount} waiting</span>}
           </div>
           <fieldset className="die-picker" disabled={playing || !!room.pending || replaying || loadingReplay}><legend>Choose your die</legend><div className="die-options">{DICE.map(die => <button key={die} type="button" aria-pressed={selected === die} className={`die-option ${selected === die ? 'selected' : ''}`} onClick={() => chooseDie(die)}>{dieLabel(die)}</button>)}</div></fieldset>
-          <button className="button primary roll-button" disabled={!canThrow} onClick={() => throwDie({ start: [0, 0.65], delta: [(Math.random() - 0.5) * 0.6, -0.85], duration_ms: 220 })}>{room.pending ? <LoaderCircle className="spin" size={20} /> : <Dices size={20} />}{replaying ? 'Return to live to roll' : `Roll ${dieLabel(selected)}`}<span className="roll-button-hint">or swipe the table</span></button>
+          <button className="button primary roll-button" disabled={!canThrow} onClick={() => throwDie(randomSwipe())}>{room.pending ? <LoaderCircle className="spin" size={20} /> : <Dices size={20} />}{replaying ? 'Return to live to roll' : `Roll ${dieLabel(selected)}`}<span className="roll-button-hint">or swipe the table</span></button>
           <p className="table-note">{reducedMotion ? 'Reduced motion is on. Rolls show their final position.' : 'Swipe direction and speed shape your throw.'}</p>
         </section>
         <aside className="history-panel" aria-label="Roll history"><div className="history-heading"><h2>Roll history</h2><History size={19} aria-hidden="true" /></div><p className="history-intro">Every roll belongs to the room. Tap one to replay.</p>
