@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { api, mergeRolls, storageGet, storageRemove, storageSet } from './api';
+import { api, mergeRolls, randomUuid, storageGet, storageRemove, storageSet } from './api';
 import type { DieKind, HistoryPage, Member, Roll, RollRecording, ServerEvent, Session, Swipe } from './types';
 
 interface PendingRoll { request_id: string; die: DieKind; swipe: Swipe }
@@ -147,7 +147,7 @@ export function useRoom(session: Session, onRoll: (recording: RollRecording) => 
 
   const roll = useCallback((die: DieKind, swipe: Swipe) => {
     if (pendingRef.current || socketRef.current?.readyState !== WebSocket.OPEN || status !== 'live') return;
-    const request = { request_id: crypto.randomUUID(), die, swipe };
+    const request = { request_id: randomUuid(), die, swipe };
     pendingRef.current = request; pendingSince.current = Date.now(); setPending(request); storageSet(pendingKey, request); setError('');
     socketRef.current.send(JSON.stringify({ type: 'roll', ...request }));
   }, [pendingKey, status]);

@@ -12,11 +12,11 @@ const roomId = roomMatch?.[1] ?? null;
 
 function randomSwipe(): Swipe {
   const angle = Math.random() * Math.PI * 2;
-  const distance = 0.24 + Math.random() * 0.52;
+  const distance = 0.34 + Math.random() * 0.48;
   return {
-    start: [-Math.cos(angle) * 0.25, -Math.sin(angle) * 0.25],
+    start: [-Math.cos(angle) * 0.35, -Math.sin(angle) * 0.35],
     delta: [Math.cos(angle) * distance, Math.sin(angle) * distance],
-    duration_ms: Math.round(180 + Math.random() * 180),
+    duration_ms: Math.round(160 + Math.random() * 140),
   };
 }
 
@@ -184,7 +184,7 @@ function Room({ session, onLeave }: { session: Session; onLeave: () => void }) {
           <div className="party-strip"><Users size={16} aria-hidden="true" /><span className="sr-only">Players connected:</span><div className="party-names">{room.members.length ? room.members.slice(0, 5).map(member => <span key={member.id} className={member.id === session.member.id ? 'player self' : 'player'}>{member.name}{member.id === session.member.id && <span className="you"> (you)</span>}</span>) : <span className="quiet">Joining as {session.member.name}</span>}{room.members.length > 5 && <span className="quiet">+{room.members.length - 5} more</span>}</div><span className="party-count">{room.members.length}/32</span></div>
           <div className="tray-wrap">
             {catalog.length > 0 && !graphicsError ? <DiceTable ref={table} catalog={catalog} selected={selected} disabled={!canThrow} onSwipe={throwDie} onError={setGraphicsError} reducedMotion={reducedMotion} /> : <div className="table-fallback">{graphicsError ? <><Dices size={48} /><h2>3D isn't available</h2><p>{graphicsError}</p><p>You can still roll with the button below and read every result.</p><button className="text-link" onClick={() => location.reload()}>Reload 3D view</button></> : <><LoaderCircle className="spin" size={28} /><p>Setting the table…</p></>}</div>}
-            {!playing && !replaying && !room.pending && !active && <div className="swipe-hint" aria-hidden="true"><ArrowUpRight size={22} /><span>Swipe across the table to throw</span></div>}
+            {!playing && !replaying && !room.pending && <div className="swipe-hint" aria-hidden="true"><ArrowUpRight size={22} /><span>Swipe across the table to throw</span></div>}
             {replaying && <button className="return-live" onClick={returnLive}><Radio size={15} />Back to live{queueCount > 0 && ` (${queueCount})`}</button>}
           </div>
           <div className="roll-status" role="status" aria-live="polite" aria-atomic="true">
