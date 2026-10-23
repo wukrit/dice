@@ -91,7 +91,7 @@ input::placeholder { color: #6b7985; opacity: 1; }
 .dice-table { position: absolute; inset: 0; width: 100%; height: 100%; }
 .dice-table canvas { width: 100%; height: 100%; display: block; touch-action: none; }
 .tray-caption { position: absolute; pointer-events: none; top: 17px; left: 18px; display: flex; align-items: center; gap: 6px; color: #425e71; font-size: 11px; font-weight: 600; }
-.swipe-hint { position: absolute; pointer-events: none; bottom: 22px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 6px; color: #36576c; font-size: 12px; }
+.swipe-hint { position: absolute; pointer-events: none; bottom: 15%; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 6px; color: #36576c; font-size: 12px; font-weight: 600; }
 .return-live { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); min-height: 44px; border: 0; border-radius: 10px; background: #fff; color: var(--accent); padding: 10px 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 650; font-size: 13px; white-space: nowrap; }
 .return-live:hover { background: #eef3f6; }
 .table-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 45px 25px; gap: 12px; }
@@ -164,7 +164,7 @@ input::placeholder { color: #6b7985; opacity: 1; }
   .party-count { font-size: 10px; }
   .tray-wrap { height: clamp(300px, 44svh, 440px); border-radius: 13px; }
   .tray-caption { top: 13px; left: 14px; font-size: 10px; }
-  .swipe-hint { bottom: 17px; font-size: 11px; }
+  .swipe-hint { bottom: 15%; font-size: 11px; }
   .roll-status { min-height: 76px; padding: 12px 2px; }
   .die-options { gap: 5px; }
   .die-option { font-size: 12px; min-height: 46px; }

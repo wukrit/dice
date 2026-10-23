@@ -20,7 +20,7 @@ use serde::{Deserialize, Serialize};
 const RADIUS: f32 = 0.62;
 const HALF_X: f32 = 3.2;
 const HALF_Z: f32 = 4.8;
-const WALL_HEIGHT: f32 = 2.5;
+const WALL_HEIGHT: f32 = 5.2;
 const HZ: u32 = 240;
 const SAMPLE_EVERY: u32 = 4;
 const NORMAL_STEPS: u32 = 10 * HZ;
@@ -306,13 +306,13 @@ impl World {
             ccd_solver: CCDSolver::new(),
         };
         let thickness = 0.25;
-        // Floor (soft felt): low vertical bounce so dice stay down on the table,
-        // moderate friction so they skip and roll across the surface.
+        // Floor (soft felt): moderate vertical bounce so dropped dice hop and
+        // tumble on landing, and moderate friction so they roll without sliding.
         world.colliders.insert(
             ColliderBuilder::cuboid(HALF_X + thickness, thickness, HALF_Z + thickness)
                 .translation(vector![0.0, -thickness, 0.0])
-                .friction(0.36)
-                .restitution(0.15)
+                .friction(0.25)
+                .restitution(0.38)
                 .restitution_combine_rule(CoefficientCombineRule::Min)
                 .build(),
         );
@@ -326,8 +326,8 @@ impl World {
                 .restitution_combine_rule(CoefficientCombineRule::Min)
                 .build(),
         );
-        // Side rails (hard wood/slate): lively horizontal rebound and very low wall
-        // friction so spinning dice reflect naturally instead of climbing up the wall.
+        // Side rails (hard wood/slate): high horizontal rebound with light
+        // tangential bite so dice ricochet energetically off the walls.
         for (half_extents, center) in [
             (
                 vector![thickness, WALL_HEIGHT / 2.0, HALF_Z + thickness],
@@ -349,9 +349,9 @@ impl World {
             world.colliders.insert(
                 ColliderBuilder::cuboid(half_extents.x, half_extents.y, half_extents.z)
                     .translation(center)
-                    .friction(0.04)
+                    .friction(0.07)
                     .friction_combine_rule(CoefficientCombineRule::Min)
-                    .restitution(0.75)
+                    .restitution(0.98)
                     .restitution_combine_rule(CoefficientCombineRule::Max)
                     .build(),
             );
@@ -370,24 +370,24 @@ impl World {
         let collider = ColliderBuilder::convex_hull(&points)
             .context("could not construct die collision hull")?
             .density(1.0)
-            .friction(0.36)
-            .restitution(0.3)
+            .friction(0.25)
+            .restitution(0.40)
             .build();
         let mut body = RigidBodyBuilder::dynamic()
             .position(position)
             .linvel(velocity)
             .angvel(spin)
             .linear_damping(0.1)
-            .angular_damping(0.3)
+            .angular_damping(0.38)
             .additional_solver_iterations(4)
             .ccd_enabled(true)
             .build();
         // Defaults permit visible drift. Require genuinely small velocities
-        // for half a second, and let Rapier (not this module) put bodies asleep.
+        // for a short window, and let Rapier (not this module) put bodies asleep.
         let activation = body.activation_mut();
         activation.normalized_linear_threshold = 0.025;
         activation.angular_threshold = 0.06;
-        activation.time_until_sleep = 0.5;
+        activation.time_until_sleep = 0.3;
         let handle = self.bodies.insert(body);
         self.colliders
             .insert_with_parent(collider, handle, &mut self.bodies);
@@ -430,17 +430,17 @@ fn launch(swipe: &Swipe, paired: bool) -> Result<(Vector<f32>, Vector<f32>)> {
         0.0,
         swipe.delta[1].clamp(-4.0, 4.0),
     ];
-    let boost = (delta.norm() * 1.25).exp();
-    let mut velocity = delta * (HALF_X * 2.0) * 0.75 * boost / seconds;
+    let boost = 1.0 + delta.norm() * 0.45;
+    let mut velocity = delta * (HALF_X * 2.0) * 0.72 * boost / seconds;
     let speed = velocity.norm();
-    if speed > 25.0 {
-        velocity *= 25.0 / speed;
+    if speed > 15.5 {
+        velocity *= 15.5 / speed;
     }
-    velocity.y = 0.2 + velocity.norm() * 0.015;
+    velocity.y = -3.96 - velocity.norm() * 0.242;
     let pair_offset = if paired { 0.68 } else { 0.0 };
     let position = vector![
         swipe.start[0].clamp(-1.0, 1.0) * (HALF_X - RADIUS - 0.12 - pair_offset),
-        0.76,
+        3.8,
         swipe.start[1].clamp(-1.0, 1.0) * (HALF_Z - RADIUS - 0.12),
     ];
     Ok((position, velocity))
@@ -490,9 +490,9 @@ fn simulate_with_rng(die: u16, swipe: Swipe, rng: &mut impl Rng) -> Result<Simul
             random_rotation(rng),
         );
         let spin = vector![
-            rng.gen_range(-13.0..13.0) + velocity.z * 0.35,
-            rng.gen_range(-13.0..13.0),
-            rng.gen_range(-13.0..13.0) - velocity.x * 0.35,
+            rng.gen_range(-15.0..15.0) + velocity.z * 0.65,
+            rng.gen_range(-15.0..15.0),
+            rng.gen_range(-15.0..15.0) - velocity.x * 0.65,
         ];
         handles.push(world.add_die(mesh, position, velocity, spin)?);
         tracks.push(Track {
@@ -914,7 +914,7 @@ mod tests {
         .unwrap();
         assert!((fast.x - v.x * 2.0).abs() < 0.00001);
         assert!((fast.z - v.z * 2.0).abs() < 0.00001);
-        assert!(fast.y > v.y);
+        assert!(fast.y < v.y);
         let (_, longer) = launch(
             &Swipe {
                 delta: [0.1, -0.2],
